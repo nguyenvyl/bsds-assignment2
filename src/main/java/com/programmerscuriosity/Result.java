@@ -62,4 +62,5 @@ public class Result {
     public void setLatency(List<Double> latency) {
         this.latency = latency;
     }
+
 }

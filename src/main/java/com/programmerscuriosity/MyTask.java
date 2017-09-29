@@ -14,9 +14,11 @@ import java.util.concurrent.Callable;
 public class MyTask implements Callable<Result>{
 
     private int iterationTimes;
-    //final CyclicBarrier barrier;
     private Result statistics;
     private String ipAddress;
+    private static String GETURL = "SimpleJersey_war/rest/myresource";
+    private static String POSTURL = "SimpleJersey_war/rest/myresource/post";
+
 
     public MyTask(int iteratedTimes, String ip) {
         iterationTimes = iteratedTimes;
@@ -29,8 +31,7 @@ public class MyTask implements Callable<Result>{
         double threadStartTime = System.currentTimeMillis();
         Response response = null;
         try {
-            response =  target.path("SimpleJersey_war").path("rest").
-                    path("myresource").
+            response =  target.path(GETURL).
                     request().
                     accept(MediaType.TEXT_PLAIN).
                     get(Response.class);
@@ -39,7 +40,8 @@ public class MyTask implements Callable<Result>{
             double latency = threadEndTime - threadStartTime;
             statistics.getLatency().add(latency);
         }  catch (ProcessingException e) {
-            System.out.println("You get a Processing Exception!");
+            System.out.println("Error message: " + e.getMessage());
+            System.out.println("Stack trace: " + e.getStackTrace());
         } catch (OutOfMemoryError e) {
             System.out.println("You don't have enough memory");
         }
@@ -51,22 +53,22 @@ public class MyTask implements Callable<Result>{
         double threadStartTime = System.currentTimeMillis();
         Response response = null;
         try {
-            response = target.path("SimpleJersey_war").path("rest").
-                    path("myresource").path("post").request()
+            response = target.path(POSTURL).request()
                     .post(Entity.entity("Hello", MediaType.TEXT_PLAIN));
             double threadEndTime = System.currentTimeMillis();
             double latency = threadEndTime - threadStartTime;
             statistics.getLatency().add(latency);
             response.close();
         } catch (ProcessingException e) {
-            System.out.println("You get a Processing Exception!");
+            System.out.println("Error message: " + e.getMessage());
+            System.out.println("Stack trace: " + e.getStackTrace());
         } catch (OutOfMemoryError e) {
             System.out.println("You don't have enough memory");
         }
         return response;
     }
 
-
+    // function that each thread will call
     public Result call() throws Exception {
         ClientConfig config = new ClientConfig();
         Client client = ClientBuilder.newClient(config);
@@ -81,7 +83,6 @@ public class MyTask implements Callable<Result>{
                 statistics.addSuccessfulRequest();
 
             }
-
             //calling POST
             Response response1 = callPOST(target);
             statistics.addNumberRequest();
