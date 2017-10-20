@@ -55,9 +55,17 @@ public class MyPost implements Callable<Result>{
         ClientConfig config = new ClientConfig();
         Client client = ClientBuilder.newClient(config);
         WebTarget target = client.target(ipAddress);
-        for (RFIDLiftData data : dataList) {
+//        for (RFIDLiftData data : dataList) {
+//            //calling POST
+//            Response response1 = callPOST(target, data);
+//            statistics.addNumberRequest();
+//            if(response1.getStatus() == 200) {
+//                statistics.addSuccessfulRequest();
+//            }
+//        }
+        for (int i = 0; i < 100; i++) {
             //calling POST
-            Response response1 = callPOST(target, data);
+            Response response1 = callPOST(target, dataList.get(0));
             statistics.addNumberRequest();
             if(response1.getStatus() == 200) {
                 statistics.addSuccessfulRequest();
