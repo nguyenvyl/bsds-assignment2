@@ -9,18 +9,17 @@ import com.programmerscuriosity.model.RFIDLiftData;
 public class MyClient {
 
     //default argument values
-    private static final int NUMBER_POST_THREADS = 50;
+    private static final int NUMBER_POST_THREADS = 200;
     private static final int NUMBER_GET_THREADS = 100;
     private static final int NUM_SKIERS = 40000;
     private static final String IPADDRESS = "http://bsdsdatabase-env-3.us-west-2.elasticbeanstalk.com/";
     private static final String PORT = "8084";
-    private static final String DAY1_FILE = "/home/nguyenvyl/NetBeansProjects/SDS/src/main/resources/BSDSAssignment2Day1.csv";
+    private static final String DAY1_FILE = "C:\\Users\\BRF8\\Documents\\NetBeansProjects\\bsds-assignment2\\src\\main\\resources\\BSDSAssignment2Day1.csv";
 //    private static String IP = IPADDRESS.concat(":").concat(PORT);
     private static String IP = IPADDRESS;
 
     public static void main(String[] args) throws InterruptedException, ExecutionException, IOException, Exception {
         loadFileToDatabase(DAY1_FILE);
-
     }
 
     public static void loadFileToDatabase(String fileName) throws InterruptedException, ExecutionException, ExecutionException, IOException {
