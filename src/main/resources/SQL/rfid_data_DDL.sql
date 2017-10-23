@@ -1,4 +1,4 @@
-SELECT count(*) FROM rfid_data_day_1;CREATE TABLE `rfid_data_day_1` (
+CREATE TABLE `rfid_data_day_1` (
   `resortID` int(11) NOT NULL,
   `dayNum` int(11) NOT NULL,
   `skierID` int(11) NOT NULL,

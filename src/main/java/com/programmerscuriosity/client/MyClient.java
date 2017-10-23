@@ -14,13 +14,13 @@ public class MyClient {
     private static final int NUM_SKIERS = 40000;
     private static final String IPADDRESS = "http://bsdsdatabase-env-4.us-west-2.elasticbeanstalk.com/";
     private static final String PORT = "8084";
-    private static final String DAY1_FILE = "C:\\Users\\Vy\\Documents\\NetBeansProjects\\SDS\\src\\main\\resources\\BSDSAssignment2Day1.csv";
+//    private static final String DAY1_FILE = "C:\\Users\\Vy\\Documents\\NetBeansProjects\\SDS\\src\\main\\resources\\BSDSAssignment2Day1.csv";
+    private static final String DAY1_FILE = "C:\\Users\\BRF8\\Documents\\NetBeansProjects\\bsds-assignment2\\src\\main\\resources\\BSDSAssignment2Day1.csv";
 //    private static String IP = IPADDRESS.concat(":").concat(PORT);
     private static String IP = IPADDRESS;
 
     public static void main(String[] args) throws InterruptedException, ExecutionException, IOException, Exception {
         loadFileToDatabase(DAY1_FILE);
-
     }
 
     public static void loadFileToDatabase(String fileName) throws InterruptedException, ExecutionException, ExecutionException, IOException {

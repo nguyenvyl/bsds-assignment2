@@ -101,7 +101,7 @@ public class MyPost implements Callable<Result>{
             statistics.addNumberRequest();
             if(response1.getStatus() == 200) {
                 statistics.addSuccessfulRequest();
-            }
+            } 
         }
         client.close();
         return statistics;
