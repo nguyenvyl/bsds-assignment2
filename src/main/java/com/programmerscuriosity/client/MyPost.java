@@ -12,6 +12,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.concurrent.Callable;
+import jersey.repackaged.com.google.common.collect.Lists;
 import org.json.JSONObject;
 
 public class MyPost implements Callable<Result>{
@@ -19,8 +20,11 @@ public class MyPost implements Callable<Result>{
     private Result statistics;
     private String ipAddress;
     private List<RFIDLiftData> dataList;
+    private final int NUM_REQUESTS = 100;
     // TODO: Update URLs for post and get
     private static String POSTURL = "webapi/myresource/load";
+    private static String BATCH_POSTURL = "webapi/myresource/loadBatch";
+
 
 
     public MyPost(List<RFIDLiftData> data, String ip) {
@@ -49,12 +53,32 @@ public class MyPost implements Callable<Result>{
         }
         return response;
     }
+    
+    //call POST method
+    public Response callBatchPOST(WebTarget target, List<RFIDLiftData> data) {
+        double threadStartTime = System.currentTimeMillis();
+        Response response = null;
+        try {
+            response = target.path(BATCH_POSTURL).request()
+                    .post(Entity.entity(data, MediaType.APPLICATION_JSON));
+            double threadEndTime = System.currentTimeMillis();
+            double latency = threadEndTime - threadStartTime;
+            statistics.getLatency().add(latency);
+            response.close();
+        } catch (ProcessingException e) {
+            System.out.println("Error message: " + e.getMessage());
+            System.out.println("Stack trace: " + e.getStackTrace());
+        } catch (OutOfMemoryError e) {
+            System.out.println("You don't have enough memory");
+        }
+        return response;
+    }
 
-    // function that each thread will call
-    public Result call() throws Exception {
-        ClientConfig config = new ClientConfig();
-        Client client = ClientBuilder.newClient(config);
-        WebTarget target = client.target(ipAddress);
+    // Call function for one request at a time
+//    public Result call() throws Exception {
+//        ClientConfig config = new ClientConfig();
+//        Client client = ClientBuilder.newClient(config);
+//        WebTarget target = client.target(ipAddress);
 //        for (RFIDLiftData data : dataList) {
 //            //calling POST
 //            Response response1 = callPOST(target, data);
@@ -63,9 +87,17 @@ public class MyPost implements Callable<Result>{
 //                statistics.addSuccessfulRequest();
 //            }
 //        }
-        for (int i = 0; i < 100; i++) {
+//        client.close();
+//        return statistics;
+//    }
+    public Result call() throws Exception {
+        ClientConfig config = new ClientConfig();
+        Client client = ClientBuilder.newClient(config);
+        WebTarget target = client.target(ipAddress);
+        List<List<RFIDLiftData>> dataBatches = Lists.partition(dataList, NUM_REQUESTS);
+        for (List<RFIDLiftData> dataBatch : dataBatches) {
             //calling POST
-            Response response1 = callPOST(target, dataList.get(0));
+            Response response1 = callBatchPOST(target, dataBatch);
             statistics.addNumberRequest();
             if(response1.getStatus() == 200) {
                 statistics.addSuccessfulRequest();
@@ -74,4 +106,7 @@ public class MyPost implements Callable<Result>{
         client.close();
         return statistics;
     }
+    
+    
+    
 }
