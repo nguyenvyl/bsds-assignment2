@@ -20,14 +20,15 @@ public class MyClient {
     private static String IP = IPADDRESS;
 
     public static void main(String[] args) throws InterruptedException, ExecutionException, IOException, Exception {
-        loadFileToDatabase(DAY1_FILE);
+//        loadFileToDatabase(DAY1_FILE);
+          getAllUserData(99);
     }
 
     public static void loadFileToDatabase(String fileName) throws InterruptedException, ExecutionException, ExecutionException, IOException {
         ArrayList<RFIDLiftData> dataList = ReadData.readData(fileName);
         List<List<RFIDLiftData>> partitionedLists = Lists.partition(dataList, NUMBER_POST_THREADS);
 
-        System.out.println("Start rolling ...");
+        System.out.println("Start rolling POST requests...");
         System.out.println("IP address of server is: " + IPADDRESS);
         System.out.println("Listening on port: " + PORT);
         System.out.println("Number of Thread: " + NUMBER_POST_THREADS);
@@ -82,10 +83,10 @@ public class MyClient {
 
     public static void getAllUserData(int dayNum) throws InterruptedException, ExecutionException, ExecutionException, IOException {
 
-        System.out.println("Start rolling ...");
+        System.out.println("Start rolling GET requests...");
         System.out.println("IP address of server is: " + IPADDRESS);
         System.out.println("Listening on port: " + PORT);
-        System.out.println("Number of Thread: " + NUMBER_POST_THREADS);
+        System.out.println("Number of Threads: " + NUMBER_POST_THREADS);
 
         ExecutorService executor = Executors.newFixedThreadPool(NUMBER_GET_THREADS);
         Result statistics = new Result();
@@ -138,7 +139,7 @@ public class MyClient {
         System.out.println("The 95th percentile GET latency is: " + latencyList.get((int) (latencyList.size() * 0.95)) + " milliseconds");
         System.out.println("The 99th percentile GET latency is: " + latencyList.get((int) (latencyList.size() * 0.99)) + " milliseconds");
     }
-
+    
     /**
      * Get the median number, given a list
      *

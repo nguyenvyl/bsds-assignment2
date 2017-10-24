@@ -84,13 +84,4 @@ public class RFIDLiftData implements Serializable, Comparable<RFIDLiftData>  {
         return ("(" + resortID + "," + dayNum + "," + skierID + "," + liftID + "," + time + ")");
     }
     
-    public JSONObject toJSONObject() {
-        JSONObject json = new JSONObject();
-        json.put("resortID", resortID);
-        json.put("dayNum", dayNum);
-        json.put("skierID", skierID);
-        json.put("liftID", liftID);
-        json.put("time", time);
-        return json;
-    }
 }
