@@ -8,25 +8,19 @@ package com.programmerscuriosity.client;
 import com.programmerscuriosity.model.RFIDLiftData;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.UUID;
-/**
- *
- * @author nguyenvyl
- */
-public class ReadData {
+
+// Utility class that reads the .csv file into a list of RFIDLiftData objects
+public class ReadCSVData {
     public static ArrayList<RFIDLiftData> readData(String fileName) throws FileNotFoundException, IOException {
         ArrayList<RFIDLiftData> data = new ArrayList<>();
         BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(fileName)));
         String line;
         bufferedReader.readLine();
         while((line = bufferedReader.readLine()) != null) {
-            line = bufferedReader.readLine();
             String[] entries = line.split(",");
             int resortID = Integer.parseInt(entries[0]);
             int dayNum = Integer.parseInt(entries[1]);

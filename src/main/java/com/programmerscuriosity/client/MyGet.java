@@ -1,5 +1,7 @@
 package com.programmerscuriosity.client;
 
+import com.programmerscuriosity.model.SkierData;
+import java.util.Arrays;
 import java.util.List;
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -33,26 +35,28 @@ public class MyGet implements Callable<Result>{
     }
 
     //call GET method
-    public Response callGET(WebTarget target, int dayNum, int skierID) {
+    public SkierData callGET(WebTarget target, int dayNum, int skierID) {
         double threadStartTime = System.currentTimeMillis();
-        Response response = null;
+        SkierData skier = null;
         String getURL = addQueryParams(GETURL, dayNum, skierID);
+        System.out.println(getURL);
         try {
-            response =  target.path(getURL)
-                    .request()
-                    .accept(MediaType.TEXT_PLAIN).
-                    get(Response.class);
+            Response response = target.path(getURL)
+                    .request(MediaType.APPLICATION_JSON)
+                    .get();
+            skier = response.readEntity(SkierData.class);
             double threadEndTime = System.currentTimeMillis();
-            response.close();
             double latency = threadEndTime - threadStartTime;
             statistics.getLatency().add(latency);
         }  catch (ProcessingException e) {
             System.out.println("Error message: " + e.getMessage());
-            System.out.println("Stack trace: " + e.getStackTrace());
+            System.out.println("Stack trace: " + Arrays.toString(e.getStackTrace()));
         } catch (OutOfMemoryError e) {
             System.out.println("You don't have enough memory");
+        } catch (Exception e) {
+            return skier;
         }
-        return response;
+        return skier;
     }
     
     public String addQueryParams(String URL, int dayNum, int skierID) {
@@ -64,13 +68,14 @@ public class MyGet implements Callable<Result>{
         ClientConfig config = new ClientConfig();
         Client client = ClientBuilder.newClient(config);
         WebTarget target = client.target(ipAddress);
+        System.out.println("Calling IP address " + ipAddress);
         for (int i = startID; i < numIterations; i++) {
 //            calling GET
-            Response response = callGET(target, dayNum, i);
+            SkierData skier = callGET(target, dayNum, i);
 //            increase numbers of request
             statistics.addNumberRequest();
 //            increase numbers of successful request if succeed
-            if(response.getStatus() == 200) {
+            if(skier != null) {
                 statistics.addSuccessfulRequest();
             }
         }
