@@ -21,7 +21,7 @@ public class MyGet implements Callable<Result>{
     private String ipAddress;
     private int dayNum;
     private int startID;
-    private int numIterations = 400;
+    private int numIterations;
     // TODO: Update URLs for post and get
     private static final String GETURL = "webapi/myresource/myvert";
 
@@ -35,16 +35,15 @@ public class MyGet implements Callable<Result>{
     }
 
     //call GET method
-    public SkierData callGET(WebTarget target, int dayNum, int skierID) {
+    public SkierData callGET(String ipAddress, int dayNum, int skierID) {
         double threadStartTime = System.currentTimeMillis();
         SkierData skier = null;
-        String getURL = addQueryParams(GETURL, dayNum, skierID);
-        System.out.println(getURL);
+        String getURL = addQueryParams(ipAddress, GETURL, dayNum, skierID);
+        Client client = ClientBuilder.newClient();
         try {
-            Response response = target.path(getURL)
+            skier = client.target(getURL)
                     .request(MediaType.APPLICATION_JSON)
-                    .get();
-            skier = response.readEntity(SkierData.class);
+                    .get(SkierData.class);
             double threadEndTime = System.currentTimeMillis();
             double latency = threadEndTime - threadStartTime;
             statistics.getLatency().add(latency);
@@ -56,22 +55,20 @@ public class MyGet implements Callable<Result>{
         } catch (Exception e) {
             return skier;
         }
+        System.out.println("Retrieved skier " + skier.toSQLString());
         return skier;
     }
     
-    public String addQueryParams(String URL, int dayNum, int skierID) {
-        return URL + "?dayNum=" + Integer.toString(dayNum) + "&skierID=" + Integer.toString(skierID);
+    public String addQueryParams(String ipAddress, String URL, int dayNum, int skierID) {
+        return ipAddress + URL + "?dayNum=" + Integer.toString(dayNum) + "&skierID=" + Integer.toString(skierID);
     }
 
     // function that each thread will call
     public Result call() throws Exception {
-        ClientConfig config = new ClientConfig();
-        Client client = ClientBuilder.newClient(config);
-        WebTarget target = client.target(ipAddress);
-        System.out.println("Calling IP address " + ipAddress);
-        for (int i = startID; i < numIterations; i++) {
+        for (int i = startID; i < startID + numIterations; i++) {
+           
 //            calling GET
-            SkierData skier = callGET(target, dayNum, i);
+            SkierData skier = callGET(ipAddress, dayNum, i);
 //            increase numbers of request
             statistics.addNumberRequest();
 //            increase numbers of successful request if succeed
@@ -79,7 +76,6 @@ public class MyGet implements Callable<Result>{
                 statistics.addSuccessfulRequest();
             }
         }
-        client.close();
         return statistics;
     }
 }
