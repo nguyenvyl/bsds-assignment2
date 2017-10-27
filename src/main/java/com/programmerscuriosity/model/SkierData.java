@@ -1,4 +1,3 @@
-
 package com.programmerscuriosity.model;
 
 import java.io.Serializable;
@@ -56,6 +55,8 @@ public class SkierData implements Serializable, Comparable<SkierData>{
     public void setDayNum(int dayNum) {
         this.dayNum = dayNum;
     }
+    
+    @Override
     public int compareTo(SkierData compareData) {
         int compareID = ((SkierData) compareData).getSkierID();
         //ascending order

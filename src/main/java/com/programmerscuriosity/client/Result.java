@@ -3,6 +3,9 @@ package com.programmerscuriosity.client;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class used to store and calculate latency stats
+ */
 public class Result {
 
     private long wallTime;

@@ -52,6 +52,7 @@ public class MyPost implements Callable<Result>{
         return response;
     }
 
+    @Override
     public Result call() throws Exception {
         ClientConfig config = new ClientConfig();
         config.property(ClientProperties.CONNECT_TIMEOUT, 5000);
